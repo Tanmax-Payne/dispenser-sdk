@@ -32,32 +32,19 @@ import debug from 'debug';
 
 const debugLog = debug('dispenser:find-dispenser-port');
 
-// Define the hardware ID and attribute ID you want to search for
-export const hardwareId = '0403';
-export const attributeId = '6001';
 
-// Function to find port based on hardware ID and attribute ID
-export async function findDispenserPort(hardwareId, attributeId) {
+
+// Define the fixed serial port path for the Waveshare HAT
+// Use '/dev/ttyAMA0' or '/dev/serial0' depending on your Raspberry Pi configuration
+export const serialPortPath = '/dev/ttyAMA1'; // or '/dev/serial0' (for RS232  // Lfetmost port)
+
+// Function to get the fixed serial port path
+export async function findDispenserPort() {
     try {
-        debugLog(`Finding dispenser port with hardware ID: ${hardwareId}, and attribute ID: ${attributeId}`);
-
-        // List all connected serial ports
-        const ports = await SerialPort.list();
-        debugLog('Available ports:', ports);
-
-        // Find the port with matching vendorId and productId
-        const foundPort = ports.find((port) => {
-            return port.vendorId === hardwareId && port.productId === attributeId;
-        });
-
-        if (foundPort) {
-            debugLog('Found dispenser port:', foundPort.path);
-            return foundPort.path;
-        } else {
-            throw new Error(`Port not found for hardware ID: ${hardwareId}, product ID: ${attributeId}`);
-        }
+        debugLog('Using fixed serial port path for Waveshare HAT:', serialPortPath);
+        return serialPortPath;
     } catch (error) {
-        debugLog('Error finding dispenser port:', error);
+        debugLog('Error getting serial port path:', error);
         throw error;
     }
 }
